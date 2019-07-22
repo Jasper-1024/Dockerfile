@@ -1,6 +1,6 @@
 FROM alpine:latest
 ENV VERSION=20181113.0
-RUN wget https://github.com/wangyu-/udp2raw-tunnel/releases/download/$VERSION/  udp2raw_binaries.tar.gz && \
+RUN wget https://github.com/wangyu-/udp2raw-tunnel/releases/download/$VERSION/udp2raw_binaries.tar.gz && \
     tar -zxvf udp2raw_binaries.tar.gz && \
     mv udp2raw_amd64 usr/ && \
     rm udp2raw_* && \
