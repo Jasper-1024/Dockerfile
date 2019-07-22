@@ -1,2 +1,2 @@
 # Dockerfile
-Some private Dockerfile
+Clone from colinwjd/aria2-ariang
