@@ -1,0 +1,13 @@
+version: '2.1'
+
+services:
+  udp2raw:
+    build:
+      context: ./
+    container_name: udp2raw_client
+    restart: always
+    ports:
+      - "127.0.0.1:901:901"
+    network_mode: "host"
+    volumes:
+      - ./client.conf:/server.conf
