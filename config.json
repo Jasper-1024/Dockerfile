@@ -1,0 +1,49 @@
+{
+  "BindAddress": ":53",
+  "DebugHTTPAddress": "127.0.0.1:5555",
+  "PrimaryDNS": [
+    {
+      "Name": "AliDNS",
+      "Address": "223.5.5.5:53",
+      "Protocol": "tcp",
+      "SOCKS5Address": "",
+      "Timeout": 2,
+      "EDNSClientSubnet": {
+        "Policy": "auto",
+        "ExternalIP": "",
+        "NoCookie": true
+      }
+    }
+  ],
+  "AlternativeDNS": [
+    {
+      "Name": "CloudflareDNS",
+      "Address": "one.one.one.one:853@1.0.0.1",
+      "Protocol": "tcp-tls",
+      "SOCKS5Address": "",
+      "Timeout": 6,
+      "EDNSClientSubnet": {
+        "Policy": "auto",
+        "ExternalIP": "",
+        "NoCookie": true
+      }
+    }
+  ],
+  "OnlyPrimaryDNS": false,
+  "IPv6UseAlternativeDNS": false,
+  "WhenPrimaryDNSAnswerNoneUse": "PrimaryDNS",
+  "IPNetworkFile": {
+    "Primary": "./data/china_ip_list.txt",
+    "Alternative": "./ip_network_alternative_sample"
+  },
+  "DomainFile": {
+    "Primary": "./data/china_list.txt",
+    "Alternative": "./data/gfw_list.txt",
+    "Matcher":  "regex-list"
+  },
+  "HostsFile": "./hosts_sample",
+  "MinimumTTL": 0,
+  "DomainTTLFile" : "./domain_ttl_sample",
+  "CacheSize" : 0,
+  "RejectQType": [255]
+}

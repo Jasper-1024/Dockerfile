@@ -1,25 +1,36 @@
-FROM alpine:3.8
+FROM alpine:latest
+LABEL authors "jasperhale <ljy087621@gmail.com>"
 
-ENV VERSION v1.5
+ENV VERSION v1.6-rc6
+ENV OVERTURE_HOME="/home/overture"
+ENV DATA_DIR="${OVERTURE_HOME}/data"
+ENV TMP_DIR="${OVERTURE_HOME}/tmp"
 
-WORKDIR /srv
+RUN echo "export DATA_DIR=${DATA_DIR}" >> /etc/profile  \
+    && echo "export OVERTURE_HOME=${OVERTURE_HOME}" >> /etc/profile
 
-RUN set -xe && \
-    mkdir overture && \
-    cd /srv/overture && \
-    apk add --no-cache unzip curl && \
-    curl -fsSLO --compressed "https://github.com/shawn1m/overture/releases/download/${VERSION}/overture-linux-amd64.zip" && \
-    curl https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt | base64 -d | sort -u | sed '/^$\|@@/  d'| sed 's#!.\+##; s#|##g; s#@##g; s#http:\/\/##;   s#https:\/\/##;' | sed '/\*/d; /apple\.com/d; /sina\.cn/  d; /sina\.com\.cn/d; /baidu\.com/d; /qq\.com/d' | sed '/  ^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/d' | grep '^  [0-9a-zA-Z\.-]\+$' | grep '\.' | sed 's#^\.\+##' | sort   -u > gfwlist.txt && \
-    curl https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt >    china_ip_list.txt && \
-    unzip -o "overture-linux-amd64.zip" -d /srv/overture  &&   \
-    rm -rf "overture-linux-amd64.zip" && \
-    apk del unzip && \
-    sed -i 's/ip_network_primary_sample/china_ip_list.txt/  g' config.json && \
-    sed -i 's/domain_alternative_sample/gfwlist.txt/g'   config.json && \
-    echo '#!/bin/sh' > update.sh && \
-    echo "curl https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt | base64 -d | sort -u | sed   '/^$\|@@/d'| sed 's#!.\+##; s#|##g; s#@##g; s#http:\/\/  ##; s#https:\/\/##;' | sed '/\*/d; /apple\.com/d; /  sina\.cn/d; /sina\.com\.cn/d; /baidu\.com/d; /qq\.com/  d' | sed '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/d' |   grep '^[0-9a-zA-Z\.-]\+$' | grep '\.' | sed 's#^\.\+##'   | sort -u > gfwlist.txt" >> update.sh && \
-    echo "curl https://raw.githubusercochina_ip_list/master/china_ip_list.txt >>  china_ip_list.txt" >> update.sh &&   \
-  chmod u+x update.sh && \
-  echo '0 2 * * *  sh  /srv/overture/update.sh'>>/var/spool/cron/crontabs/root
+COPY getfilter.sh /getfilter.sh
+COPY start.sh  /start.sh
 
-CMD crond && cd /srv/overture && ./overture-linux-amd64 -l overture.log
+RUN set -xe  \
+    && apk add --no-cache unzip curl  \
+    && mkdir -p "$OVERTURE_HOME" "$DATA_DIR"  "$TMP_DIR" \
+    && cd  "$OVERTURE_HOME"  \
+    && curl -fsSLO --compressed "https://github.com/shawn1m/overture/releases/download/${VERSION}/overture-linux-amd64.zip"  \
+    && unzip -o "overture-linux-amd64.zip" -d "$TMP_DIR"  \
+    && mv "$TMP_DIR/overture-linux-amd64" "$OVERTURE_HOME/overture"  \
+    && rm -rf "overture-linux-amd64.zip"  "${TMP_DIR}"\
+    && chmod a+x /getfilter.sh  \
+    && sh /getfilter.sh  \
+    && chmod a+x /start.sh  \
+    &&  echo '0 2 * * *  sh  /start.sh'>>/var/spool/cron/crontabs/root  
+#    && apk del unzip curl 
+
+COPY config.json "$OVERTURE_HOME/config.json"
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod a+x /entrypoint.sh
+
+EXPOSE 53
+VOLUME "$DATA_DIR"
+
+ENTRYPOINT [ "/entrypoint.sh" ]
