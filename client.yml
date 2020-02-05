@@ -1,13 +1,32 @@
 version: '2.1'
 
 services:
-  udp2raw:
+#  udp2raw-icmp:
+#    build:
+#      context: ./
+#    container_name: udp2raw-icmp
+#    restart: always
+#    privileged: true
+#    network_mode: "host"
+#    volumes:
+#      - ./config/client-icmp.conf:/server.conf
+
+  udp2raw-tcp:
     build:
       context: ./
-    container_name: udp2raw_client
+    container_name: udp2raw-tcp
     restart: always
-    ports:
-      - "127.0.0.1:901:901"
+    privileged: true
     network_mode: "host"
     volumes:
-      - ./client.conf:/server.conf
+      - ./config/client-tcp.conf:/server.conf
+
+ # udp2raw-tcp6:
+ #   build:
+ #     context: ./
+ #   container_name: udp2raw-tcp6
+ #   restart: always
+ #   privileged: true
+ #   network_mode: "host"
+ #   volumes:
+ #     - ./config/client-tcp6.conf:/server.conf
