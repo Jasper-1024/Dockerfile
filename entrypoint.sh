@@ -6,19 +6,19 @@ if [ "$1" = "--help" ]; then
 else 
     crond # 启动定时任务
     cd $OVERTURE_HOME
-    set -- $COMMAND $@
- #   while true; do
- #       sleep 5
- #   done
- #   cd $OVERTURE_HOME
- #   set -- $COMMAND $@
- #   mkfifo /tmp/overture # 创建命名管道
- #   while true; do #启动一个循环
- #       cat /tmp/overture > restart #检查命名管道重启信号
- #       pkill overture
- #       set -- $COMMAND $@
- #       sleep 5
- #   done
+    nohup $COMMAND $@ > myout.file 2>&1 &
+
+    while true; do
+        server=`ps aux | grep overture | grep -v grep`
+        if [ ! "$server" ]; then
+            #如果不存在就重新启动
+            nohup $COMMAND $@ > myout.file 2>&1 &
+            #延迟10s
+            sleep 10
+        fi
+        #每次循环沉睡5s
+        sleep 5
+    done
 fi
-``
+
 exec "$@"
