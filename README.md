@@ -17,7 +17,7 @@ overture 的配置可以参见
 
 [overture](https://github.com/shawn1m/overture) is a DNS server/forwarder/dispatcher written in Go.
 
-If you want to know about configu,you can refer to the following url.
+If you want to know about config,you can refer to the following url.
 
 * [official document](https://github.com/shawn1m/overture)
 * [docker 搭建 overture 无污染 DNS](https://jasper-1024.github.io/jasper/d510a085/)
@@ -70,6 +70,8 @@ services:
     volumes:
       - - ./config.json:/home/overture/config.json
 ```
+
+---
 
 default config local at `/home/overture/config.json`
 
