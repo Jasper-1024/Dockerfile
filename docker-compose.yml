@@ -1,0 +1,17 @@
+version: '2.3'
+
+services:
+  
+  dl:
+    build:
+      context: ./
+    container_name: dl
+    restart: always
+    ports:
+      - "127.0.0.1:8888:8888"
+      - "127.0.0.1:6006:6006"
+    runtime: nvidia
+    # user: 1000:1000
+    # network_mode: "host"
+    volumes:
+      - ./user:/home/user
